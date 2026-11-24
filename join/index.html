@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Join a table – Impostor Online</title>
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <p class="brand">Impostor Online <span>by SkullSocket Studios</span></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Join a table</h1>
+
+  <div id="has-code" hidden>
+    <p>You're invited to a table in Impostor Online. Its code:</p>
+    <p class="code" id="code"></p>
+    <p>Have the game? Open it and type the code in <strong>Join Game</strong>.</p>
+  </div>
+
+  <p id="no-code" hidden>This link holds no valid table code. Ask the friend who sent it for the code.</p>
+
+  <noscript>
+    <p>Open Impostor Online, go to <strong>Join Game</strong> and type the code from this link: the six characters after <code>c=</code> in the address.</p>
+  </noscript>
+
+  <p class="store" id="store" hidden><a class="button" id="store-link"></a></p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="Policies">
+      <a href="/privacy/">Privacy Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/delete-account/">Delete Account</a>
+      <a href="/support/">Support</a>
+    </nav>
+    <p>Contact: <a href="mailto:info@skullsocketstudios.com">info@skullsocketstudios.com</a></p>
+  </div>
+</footer>
+
+<script>
+// On Android with the game installed, an invite link opens the game (App Links) and this page never shows.
+
+// The table code in ?c=, read as the game reads a typed code (JoinCode.TryRead): upper-cased, spaces and dashes
+// dropped, then exactly six characters of the game's alphabet (no 0, O, 1 or I). Null for anything else.
+var CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+var CODE_LENGTH = 6;
+
+function tableCode(search) {
+  var raw = new URLSearchParams(search).get("c");
+  if (raw === null) return null;
+  var code = raw.toUpperCase().replace(/[\s-]/g, "");
+  if (code.length !== CODE_LENGTH) return null;
+  for (var i = 0; i < code.length; i++) {
+    if (CODE_ALPHABET.indexOf(code.charAt(i)) < 0) return null;
+  }
+  return code;
+}
+
+// The one store for this browser: Google Play on Android, Steam on a desktop (Windows, macOS, Linux), and none
+// on an iPhone, an iPad or anything else, since there is no iPhone version yet. iPadOS Safari sends a Mac user
+// agent, so a "Mac" with a touch screen is an iPad.
+function storeFor(userAgent, maxTouchPoints) {
+  if (/iPhone|iPad|iPod/.test(userAgent)) return null;
+  if (/Macintosh/.test(userAgent) && maxTouchPoints > 1) return null;
+  if (/Android/.test(userAgent)) return "play";
+  if (/Mobi|Tablet/.test(userAgent)) return null;
+  if (/Windows NT|Macintosh|Linux/.test(userAgent)) return "steam";
+  return null;
+}
+
+var STORES = {
+  play: {
+    text: "Get it on Google Play",
+    href: "https://play.google.com/store/apps/details?id=com.skullsocket.impostoronline"
+  },
+  steam: {
+    text: "Get it on Steam",
+    href: "https://store.steampowered.com/app/2966570/Impostor_Online/"
+  }
+};
+
+var code = tableCode(location.search);
+if (code) {
+  document.getElementById("code").textContent = code;
+  document.getElementById("has-code").hidden = false;
+} else {
+  document.getElementById("no-code").hidden = false;
+}
+
+var store = storeFor(navigator.userAgent, navigator.maxTouchPoints || 0);
+if (store) {
+  var storeLink = document.getElementById("store-link");
+  storeLink.textContent = STORES[store].text;
+  storeLink.href = STORES[store].href;
+  document.getElementById("store").hidden = false;
+}
+</script>
+</body>
+</html>

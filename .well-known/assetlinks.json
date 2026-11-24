@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.skullsocket.impostoronline",
+      "sha256_cert_fingerprints": [
+        "74:AC:B8:BE:BB:85:84:16:5E:F6:8D:7A:6D:D5:0D:9D:0B:08:4E:93:A3:E6:CD:0E:29:CE:17:79:4D:36:11:AA"
+      ]
+    }
+  }
+]
